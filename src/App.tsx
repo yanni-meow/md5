@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 // @ts-ignore
 import MD5 from "crypto-js/md5";
-import { Input, Table } from "./components";
-import { DataType, useStore } from "./store";
-import { findSameHash } from "./lib";
+import {Input, Table} from "./components";
+import {DataType, useStore} from "./store";
+import {findSameHash} from "./lib";
 import './App.css';
 
 function App() {
@@ -16,11 +16,11 @@ function App() {
     const uploadData = (event: Event) => {
         setErr(false);
 
-        const target= event.target as HTMLInputElement;
+        const target = event.target as HTMLInputElement;
         const file: DataType = (target.files as FileList)[0];
         const reader = new FileReader();
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             const binary = event.target?.result;
             const md5 = MD5(binary).toString();
 
@@ -49,23 +49,21 @@ function App() {
                     <Table.Cell>Размер</Table.Cell>
                 </Table.Head>
                 {data.length > 0 && data.map(item => (
-                    <>
-                        <Table.Row key={item.hash}>
-                            <Table.Cell>{item.name}</Table.Cell>
-                            <Table.Cell>{item.hash}</Table.Cell>
-                            <Table.Cell>{item.size}</Table.Cell>
-                            <span
-                                className='remove'
-                                onClick={() => removeData(item.hash || '')}
-                            >
+                    <Table.Row key={item.hash}>
+                        <Table.Cell>{item.name}</Table.Cell>
+                        <Table.Cell>{item.hash}</Table.Cell>
+                        <Table.Cell>{item.size}</Table.Cell>
+                        <span
+                            className='remove'
+                            onClick={() => removeData(item.hash || '')}
+                        >
                                 <img
                                     alt=''
                                     src="../assets/trash.svg"
                                     width="25"
                                 />
                             </span>
-                        </Table.Row>
-                    </>
+                    </Table.Row>
                 ))}
             </Table>
         </div>
