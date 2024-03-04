@@ -1,22 +1,34 @@
-import React from 'react';
+import React, {useState} from 'react';
 // @ts-ignore
 import MD5 from "crypto-js/md5";
 import { Input, Table } from "./components";
-import { useStore } from "./store";
+import { DataType, useStore } from "./store";
+import { findSameHash } from "./lib";
 import './App.css';
 
 function App() {
     const data = useStore(state => state.data);
     const updateData = useStore(state => state.updateData);
+    const removeData = useStore(state => state.removeData);
 
-    const uploadData = (event: any) => {
-        const file = event.target.files[0];
+    const [err, setErr] = useState(false);
+
+    const uploadData = (event: Event) => {
+        setErr(false);
+
+        const target= event.target as HTMLInputElement;
+        const file: DataType = (target.files as FileList)[0];
         const reader = new FileReader();
 
         reader.onload = function(event) {
             const binary = event.target?.result;
-            file.hash = MD5(binary).toString();
-            updateData(file)
+            const md5 = MD5(binary).toString();
+
+            if (findSameHash(data, md5)) setErr(true);
+            else {
+                file.hash = md5;
+                updateData(file);
+            }
         };
 
         reader.readAsBinaryString(file);
@@ -25,6 +37,11 @@ function App() {
     return (
         <div className="App">
             <Input onChange={uploadData}/>
+
+            {err &&
+                <span className='error'>Данный файл уже был загружен</span>
+            }
+
             <Table>
                 <Table.Head>
                     <Table.Cell>Название</Table.Cell>
@@ -32,11 +49,23 @@ function App() {
                     <Table.Cell>Размер</Table.Cell>
                 </Table.Head>
                 {data.length > 0 && data.map(item => (
-                    <Table.Row key={item.name}>
-                        <Table.Cell>{item.name}</Table.Cell>
-                        <Table.Cell>{item.hash}</Table.Cell>
-                        <Table.Cell>{item.size}</Table.Cell>
-                    </Table.Row>
+                    <>
+                        <Table.Row key={item.hash}>
+                            <Table.Cell>{item.name}</Table.Cell>
+                            <Table.Cell>{item.hash}</Table.Cell>
+                            <Table.Cell>{item.size}</Table.Cell>
+                            <span
+                                className='remove'
+                                onClick={() => removeData(item.hash || '')}
+                            >
+                                <img
+                                    alt=''
+                                    src="../assets/trash.svg"
+                                    width="25"
+                                />
+                            </span>
+                        </Table.Row>
+                    </>
                 ))}
             </Table>
         </div>
