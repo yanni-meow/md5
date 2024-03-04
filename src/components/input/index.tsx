@@ -19,7 +19,7 @@ export const Input: FC<{ onChange: (value: any) => void }> = ({ onChange }) => {
                 <span className="icon">
                     <img
                         alt=''
-                        src="../assets/add-file.svg"
+                        src="./assets/add-file.svg"
                         width="25"
                     />
                 </span>

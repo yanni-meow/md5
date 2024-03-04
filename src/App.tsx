@@ -59,7 +59,7 @@ function App() {
                         >
                                 <img
                                     alt=''
-                                    src="../assets/trash.svg"
+                                    src="./assets/trash.svg"
                                     width="25"
                                 />
                             </span>
